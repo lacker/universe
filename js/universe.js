@@ -13,9 +13,15 @@ function main() {
 
   // Make a single green cube
   var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshBasicMaterial({color: 0x66cc33});
+  var material = new THREE.MeshLambertMaterial({color: 0x66cc33});
   var cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
+
+  // Light source
+  var spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(-30, 60, 60);
+  spotLight.castShadow = true;
+  scene.add(spotLight);
 
   camera.position.z = 5;
   
