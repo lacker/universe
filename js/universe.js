@@ -12,7 +12,7 @@ function main() {
   document.body.appendChild(renderer.domElement);
 
   // Make a single green cube
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
+  var geometry = new THREE.BoxGeometry(2, 2, 2);
   var material = new THREE.MeshLambertMaterial({color: 0x66cc33});
   var cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
