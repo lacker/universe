@@ -11,25 +11,44 @@ function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Make a single green cube
-  var geometry = new THREE.BoxGeometry(2, 2, 2);
+  // Make a green cube
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
   var material = new THREE.MeshLambertMaterial({color: 0x66cc33});
   var cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
 
+  // Make a yellow cube for the sun
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
+  var material = new THREE.MeshLambertMaterial({color: 0xcccc33});
+  var sun = new THREE.Mesh(geometry, material);
+  sun.position.set(0, 0, 5);
+  scene.add(sun);
+
   // Light source
+  var lightAngle = 0;
+  var lightHeight = 300;
+  var lightWidth = 400;
   var spotLight = new THREE.SpotLight(0xffffff);
-  spotLight.position.set(-30, 60, 60);
+  spotLight.position.set(0, 0, lightHeight); // does this do anything?
   spotLight.castShadow = true;
   scene.add(spotLight);
 
+  // Position camera
+  // TODO: keeping up up would be nice but seems not-default. am I
+  // thinking of axes wrongly?
+  camera.position.x = 0;
+  camera.position.y = -10;
   camera.position.z = 5;
-  
+  camera.lookAt(cube.position);
+
   // Start rendering
   function render() {
     requestAnimationFrame(render);
-    cube.rotation.x += 0.01 * Math.random();
-    cube.rotation.y += 0.01 * Math.random();
+    
+    lightAngle += 0.01;
+    spotLight.position.x = Math.cos(lightAngle) * lightWidth;
+    spotLight.position.y = Math.sin(lightAngle) * lightWidth;
+
     renderer.render(scene, camera);
   }
   render();
