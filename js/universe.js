@@ -1,3 +1,8 @@
+// palette:
+// 990033 - red
+// 669900 - green
+// 0099FF - light blue 
+// 0033CC - dark blue
 
 function main() {
   console.log("innerWidth: " + window.innerWidth);
@@ -11,43 +16,55 @@ function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Make a green cube
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshLambertMaterial({color: 0x66cc33});
+  // Make a green surface
+  var geometry = new THREE.BoxGeometry(10, 1, 10);
+  var material = new THREE.MeshLambertMaterial({color: 0x669900});
   var cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
 
-  // Make a yellow cube for the sun
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshLambertMaterial({color: 0xcccc33});
-  var sun = new THREE.Mesh(geometry, material);
-  sun.position.set(0, 0, 5);
-  scene.add(sun);
+  // Make a blue ocean
+  var geometry = new THREE.BoxGeometry(1000, 1, 1000);
+  var material = new THREE.MeshLambertMaterial({color: 0x0033CC});
+  var ocean = new THREE.Mesh(geometry, material);
+  ocean.position.set(0, -1, 0);
+  scene.add(ocean);
 
-  // Light source
+  // A random brick floating in the air
+  var geometry = new THREE.BoxGeometry(1, 1, 1);
+  var material = new THREE.MeshLambertMaterial({color: 0x990033});
+  var brick = new THREE.Mesh(geometry, material);
+  brick.position.set(0, 1, 0);
+  scene.add(brick);
+
+  // Just a bit of ambient light for convenience
+  var ambient = new THREE.AmbientLight(0x333333);
+  scene.add(ambient);
+
+  // The main light source is like an arctic sun
   var lightAngle = 0;
   var lightHeight = 300;
   var lightWidth = 400;
   var spotLight = new THREE.SpotLight(0xffffff);
-  spotLight.position.set(0, 0, lightHeight); // does this do anything?
+  spotLight.position.set(0, lightHeight, 0);
   spotLight.castShadow = true;
   scene.add(spotLight);
 
   // Position camera
-  // TODO: keeping up up would be nice but seems not-default. am I
-  // thinking of axes wrongly?
   camera.position.x = 0;
-  camera.position.y = -10;
-  camera.position.z = 5;
+  camera.position.y = 5;
+  camera.position.z = -10;
   camera.lookAt(cube.position);
 
   // Start rendering
   function render() {
     requestAnimationFrame(render);
+
+    // Experiment here to figure out what 
+    // camera.position.z += 0.01;
     
     lightAngle += 0.01;
     spotLight.position.x = Math.cos(lightAngle) * lightWidth;
-    spotLight.position.y = Math.sin(lightAngle) * lightWidth;
+    spotLight.position.z = Math.sin(lightAngle) * lightWidth;
 
     renderer.render(scene, camera);
   }
