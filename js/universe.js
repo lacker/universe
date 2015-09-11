@@ -43,7 +43,6 @@ function main() {
   var lightWidth = 400;
   var spotLight = new THREE.SpotLight(0xffffff);
   spotLight.position.set(0, lightHeight, 0);
-  spotLight.castShadow = true;
   scene.add(spotLight);
 
   // Position camera
