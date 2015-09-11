@@ -4,7 +4,56 @@
 // 0099FF - light blue 
 // 0033CC - dark blue
 
+var CONTROLS;
+var HAVE_POINTER_LOCK = checkForPointerLock();
+
+function checkForPointerLock() {
+  return 'pointerLockElement' in document || 
+         'mozPointerLockElement' in document || 
+         'webkitPointerLockElement' in document;
+}
+
+function initPointerLock() {
+  var element = document.body;
+
+  if (HAVE_POINTER_LOCK) {
+    var pointerlockchange = function(event) {
+      if (document.pointerLockElement === element ||
+          document.mozPointerLockElement === element ||
+          document.webkitPointerLockElement === element) {
+        controlsEnabled = true;
+        CONTROLS.enabled = true;
+      } else {
+        controlsEnabled = false;
+        CONTROLS.enabled = false;
+      }
+    };
+
+    var pointerlockerror = function(event) {
+      element.innerHTML = 'PointerLock Error';
+    };
+
+    document.addEventListener('pointerlockchange', pointerlockchange, false);
+    document.addEventListener('mozpointerlockchange', pointerlockchange, false);
+    document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
+
+    document.addEventListener('pointerlockerror', pointerlockerror, false);
+    document.addEventListener('mozpointerlockerror', pointerlockerror, false);
+    document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
+
+    var requestPointerLock = function(event) {
+      element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+      element.requestPointerLock();
+    };
+    element.addEventListener('click', requestPointerLock, false);
+  } else {
+    element.innerHTML = 'Bad browser; No pointer lock';
+  }
+}
+
 function main() {
+  initPointerLock();
+
   // Set up rendering
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
@@ -48,8 +97,11 @@ function main() {
   // Position camera
   camera.position.x = 0;
   camera.position.y = 5;
-  camera.position.z = 10;
+  camera.position.z = 100;
   camera.lookAt(grass.position);
+  
+  CONTROLS = new THREE.PointerLockControls(camera);
+  scene.add(CONTROLS.getObject());
 
   // Start rendering
   function render() {
