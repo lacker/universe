@@ -48,7 +48,7 @@ function main() {
   // Position camera
   camera.position.x = 0;
   camera.position.y = 5;
-  camera.position.z = -10;
+  camera.position.z = 10;
   camera.lookAt(grass.position);
 
   // Start rendering
