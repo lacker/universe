@@ -5,9 +5,6 @@
 // 0033CC - dark blue
 
 function main() {
-  console.log("innerWidth: " + window.innerWidth);
-  console.log("innerHeight: " + window.innerHeight);
-
   // Set up rendering
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
@@ -16,11 +13,11 @@ function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Make a green surface
+  // Make a green grass
   var geometry = new THREE.BoxGeometry(10, 1, 10);
   var material = new THREE.MeshLambertMaterial({color: 0x669900});
-  var cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  var grass = new THREE.Mesh(geometry, material);
+  scene.add(grass);
 
   // Make a blue ocean
   var geometry = new THREE.BoxGeometry(1000, 1, 1000);
@@ -53,14 +50,14 @@ function main() {
   camera.position.x = 0;
   camera.position.y = 5;
   camera.position.z = -10;
-  camera.lookAt(cube.position);
+  camera.lookAt(grass.position);
 
   // Start rendering
   function render() {
     requestAnimationFrame(render);
 
-    // Experiment here to figure out what 
-    // camera.position.z += 0.01;
+    // Experiment here to see things move
+    // camera.position.y -= 0.01;
     
     lightAngle += 0.01;
     spotLight.position.x = Math.cos(lightAngle) * lightWidth;
