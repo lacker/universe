@@ -62,24 +62,27 @@ function main() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  var stuffDistance = 20;
+
   // Make a green grass
   var geometry = new THREE.BoxGeometry(10, 1, 10);
   var material = new THREE.MeshLambertMaterial({color: 0x669900});
   var grass = new THREE.Mesh(geometry, material);
+  grass.position.set(0, 0, -stuffDistance);
   scene.add(grass);
 
   // Make a blue ocean
   var geometry = new THREE.BoxGeometry(1000, 1, 1000);
   var material = new THREE.MeshLambertMaterial({color: 0x0033CC});
   var ocean = new THREE.Mesh(geometry, material);
-  ocean.position.set(0, -1, 0);
+  ocean.position.set(0, -1, -stuffDistance);
   scene.add(ocean);
 
   // A random brick floating in the air
   var geometry = new THREE.BoxGeometry(1, 1, 1);
   var material = new THREE.MeshLambertMaterial({color: 0x990033});
   var brick = new THREE.Mesh(geometry, material);
-  brick.position.set(0, 1, 0);
+  brick.position.set(0, 1, -stuffDistance);
   scene.add(brick);
 
   // Just a bit of ambient light for convenience
@@ -96,8 +99,8 @@ function main() {
 
   // Position camera
   camera.position.x = 0;
-  camera.position.y = 5;
-  camera.position.z = 100;
+  camera.position.y = 3;
+  camera.position.z = 0;
   camera.lookAt(grass.position);
   
   CONTROLS = new THREE.PointerLockControls(camera);
