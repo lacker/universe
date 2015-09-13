@@ -51,6 +51,10 @@ function initPointerLock() {
   }
 }
 
+function choice(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function main() {
   initPointerLock();
 
@@ -86,6 +90,15 @@ function main() {
   var brick = new THREE.Mesh(geometry, material);
   brick.position.set(0, 1, -stuffDistance);
   scene.add(brick);
+
+  k.down("c", function() {
+    var newColor = choice([
+      0x003399, 0x009933,
+      0x330099, 0x339900,
+      0x990033, 0x993300]);
+    console.log(["new color", newColor]);
+    brick.material.color.setHex(newColor);
+  });
   
   // Just a bit of ambient light for convenience
   var ambient = new THREE.AmbientLight(0x333333);
