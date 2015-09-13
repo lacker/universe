@@ -54,6 +54,8 @@ function initPointerLock() {
 function main() {
   initPointerLock();
 
+  var k = new Kibo();
+
   // Set up rendering
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
@@ -84,7 +86,7 @@ function main() {
   var brick = new THREE.Mesh(geometry, material);
   brick.position.set(0, 1, -stuffDistance);
   scene.add(brick);
-
+  
   // Just a bit of ambient light for convenience
   var ambient = new THREE.AmbientLight(0x333333);
   scene.add(ambient);
