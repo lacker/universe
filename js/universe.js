@@ -91,6 +91,29 @@ function main() {
   brick.position.set(0, 1, -stuffDistance);
   scene.add(brick);
 
+  // Make a canvas that could have text
+  var canvas = document.createElement("canvas");
+  var canvasSize = 50;
+  canvas.width = canvas.height = canvasSize;
+  var context = canvas.getContext("2d");
+  context.clearRect(0, 0, canvasSize, canvasSize);
+  context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
+  context.fillRect(0, 0, canvasSize, canvasSize);
+
+  // Float it in the air
+  var textTexture = new THREE.Texture(canvas);
+  textTexture.needsUpdate = true;
+  textTexture.minFilter = THREE.NearestFilter;
+  var textAreaMat = new THREE.MeshBasicMaterial(
+    {map: textTexture, side: THREE.DoubleSide});
+  textAreaMat.transparent = true;
+  var pane = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2),
+    new THREE.MeshBasicMaterial(textAreaMat));
+  pane.position.set(0, 4, -stuffDistance);
+  pane.rotation.y = 1;
+  scene.add(pane);
+
   k.down("c", function() {
     var newColor = choice([
       0x003399, 0x009933,
