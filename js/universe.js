@@ -92,13 +92,31 @@ function main() {
   scene.add(brick);
 
   // Make a canvas that could have text
+  var FONT_SIZE_PX = 40;
+  var NUM_LINES = 20;
+  var CANVAS_SIZE_PX = NUM_LINES * FONT_SIZE_PX + FONT_SIZE_PX * 0.2;
   var canvas = document.createElement("canvas");
-  var canvasSize = 50;
-  canvas.width = canvas.height = canvasSize;
+  canvas.width = canvas.height = CANVAS_SIZE_PX;
   var context = canvas.getContext("2d");
-  context.clearRect(0, 0, canvasSize, canvasSize);
+  context.font = FONT_SIZE_PX + 'px Inconsolata,monospace';
+  context.globalCompositeOperation = 'darker';
+  var textMetrics = context.measureText('0');
+  var charWidth = textMetrics.width;
+  var numCols = Math.floor(CANVAS_SIZE_PX / charWidth);
+  context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
   context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
-  context.fillRect(0, 0, canvasSize, canvasSize);
+  context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+
+  // Put some actual text on it
+  var lines = [
+    "hello world",
+    "multiline works ok",
+    "go bengals"];
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i];
+    context.fillStyle = 'hsl(0, 0%, 25%)';
+    context.fillText(line, 0, FONT_SIZE_PX + FONT_SIZE_PX * i);
+  }
 
   // Float it in the air
   var textTexture = new THREE.Texture(canvas);
@@ -108,10 +126,10 @@ function main() {
     {map: textTexture, side: THREE.DoubleSide});
   textAreaMat.transparent = true;
   var pane = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 2),
+    new THREE.PlaneGeometry(10, 10),
     new THREE.MeshBasicMaterial(textAreaMat));
-  pane.position.set(0, 4, -stuffDistance);
-  pane.rotation.y = 1;
+  pane.position.set(0, 10, -stuffDistance);
+  pane.rotation.y = 0.1;
   scene.add(pane);
 
   k.down("c", function() {
