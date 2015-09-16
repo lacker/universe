@@ -114,12 +114,33 @@ function main() {
   editor.lastCursor = 0;
   scene.add(editor);
 
+  // Returns x and y
+  editor.cursorPosition = function() {
+    var x = 0;
+    var y = 0;
+    var remaining = editor.cursor;
+    var lines = editor.value.split("\n");
+    for (var i = 0; i < lines.length; ++i) {
+      var line = lines[i];
+      if (remaining <= line.length) {
+        x = remaining;
+        break;
+      }
+      y++;
+      remaining -= (line.length + 1);
+    }
+    return { x: x,
+             y: y }
+  }
+
   // Gets its text from the text area
   editor.update = function() {
     if (editor.value == editor.lastValue &&
         editor.cursor == editor.lastCursor) {
       return;
     }
+
+    // Display text
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     context.fillStyle = "hsla(0, 0%, 100%, 0.8)";
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
@@ -130,6 +151,15 @@ function main() {
       context.fillStyle = "hsl(0, 0%, 25%)";
       context.fillText(line, 0, FONT_SIZE_PX + FONT_SIZE_PX * i);
     }
+
+    // Display the cursor
+    var pos = editor.cursorPosition();
+    context.fillRect(
+      pos.x * charWidth,
+      (pos.y + 0.2) * FONT_SIZE_PX,
+      5, // cursor width
+      FONT_SIZE_PX);
+
     textTexture.needsUpdate = true;
   }
 
