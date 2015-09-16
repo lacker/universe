@@ -58,8 +58,6 @@ function choice(arr) {
 function main() {
   initPointerLock();
 
-  var k = new Kibo();
-
   // Set up rendering
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
@@ -121,6 +119,7 @@ function main() {
   pane.rotation.y = 0.1;
   scene.add(pane);
 
+  // Alter editor.text yourself before calling this
   function updateEditorText() {
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
@@ -135,29 +134,6 @@ function main() {
   }
   updateEditorText();
 
-  k.down(["any letter", "any number", "space", "enter"], function() {
-    var key = k.lastKey();
-    if (key == "enter") {
-      key = "\n";
-    }
-    if (key == "space") {
-      key = " ";
-    }
-    console.log(key + " pressed");
-    editor.text += key;
-    console.log("editor text: " + editor.text);
-    updateEditorText();
-  });
-
-  k.down("tab", function() {
-    var newColor = choice([
-      0x003399, 0x009933,
-      0x330099, 0x339900,
-      0x990033, 0x993300]);
-    console.log(["new color", newColor]);
-    brick.material.color.setHex(newColor);
-  });
-  
   // Just a bit of ambient light for convenience
   var ambient = new THREE.AmbientLight(0x333333);
   scene.add(ambient);
@@ -182,8 +158,17 @@ function main() {
   var geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
   var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
   var aimer = new THREE.Mesh(geometry, material);
+  aimer.visible = false;
   camera.add(aimer);
   aimer.position.set(0, 0, -1.1);
+  
+  Mousetrap.bind("shift", function() {
+    aimer.visible = true;
+  }, "keydown");
+
+  Mousetrap.bind("shift", function() {
+    aimer.visible = false;
+  }, "keyup");
 
   // Start rendering
   function render() {
