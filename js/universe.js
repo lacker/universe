@@ -262,6 +262,36 @@ function main() {
     editor.cursor++;
   }
 
+  // First-person-motion key controls
+  var velocity = {x: 0, z: 0};
+  Mousetrap.bind("w", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.z = -0.1;
+  }, "keydown");
+  Mousetrap.bind("w", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.z = 0;
+  }, "keyup");
+  Mousetrap.bind("s", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.z = 0.1;
+  }, "keydown");
+  Mousetrap.bind("s", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.z = 0;
+  }, "keyup");
+
+
+  // Editor key controls
+
   Mousetrap.bind("shift", function() {
     if (!editor.visible) {
       aimer.visible = true;
@@ -344,6 +374,19 @@ function main() {
     requestAnimationFrame(render);
 
     editor.update();
+
+    if (velocity.z != 0 || velocity.x != 0) {
+      // Our intended velocity has a vector, in camera-space but
+      // projected onto the "floor"
+      var walk = new THREE.Vector3(velocity.x, 0, velocity.z);
+
+      // Rotate the walking vector the same way the yaw object is
+      // rotated
+      walk.applyEuler(CONTROLS.getObject().rotation);
+
+      // Move the camera wrapper
+      CONTROLS.getObject().position.add(walk);
+    }
 
     lightAngle += 0.01;
     spotLight.position.x = Math.cos(lightAngle) * lightWidth;
