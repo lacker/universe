@@ -83,6 +83,49 @@ function main() {
   brick.position.set(0, 1, -stuffDistance);
   scene.add(brick);
 
+  // Just a bit of ambient light for convenience
+  var ambient = new THREE.AmbientLight(0x333333);
+  scene.add(ambient);
+
+  // The main light source is like an arctic sun
+  var lightAngle = 0;
+  var lightHeight = 300;
+  var lightWidth = 400;
+  var spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(0, lightHeight, 0);
+  scene.add(spotLight);
+
+  // Position camera
+  camera.position.x = 0;
+  camera.position.y = 3;
+  camera.position.z = 0;
+  
+  CONTROLS = new THREE.PointerLockControls(camera);
+  scene.add(CONTROLS.getObject());
+
+  // An aiming dot
+  var geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
+  var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
+  var aimer = new THREE.Mesh(geometry, material);
+  aimer.visible = false;
+  camera.add(aimer);
+  aimer.position.set(0, 0, -1.1);
+  
+  // Find the object the aimer is aiming at
+  function aimee() {
+    var vector = new THREE.Vector3(0, 0, -1);
+    vector = camera.localToWorld(vector);
+    vector.sub(camera.position);
+    // Now vector is a unit vector with the same direction as the camera
+    var raycaster = new THREE.Raycaster( camera.position, vector);
+
+    var objects = raycaster.intersectObjects(scene.children);
+    if (objects.length == 0) {
+      return null;
+    }
+    return objects[0];
+  }
+
   // Make a canvas that could have text
   var FONT_SIZE_PX = 40;
   var NUM_LINES = 20;
@@ -103,16 +146,16 @@ function main() {
     {map: textTexture, side: THREE.DoubleSide});
   textAreaMat.transparent = true;
   var editor = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
+    new THREE.PlaneGeometry(1.5, 1.5),
     new THREE.MeshBasicMaterial(textAreaMat));
-  editor.position.set(0, 10, -stuffDistance);
-  editor.rotation.y = 0.1;
   editor.visible = false;
   editor.value = "hello world\nmultiline works\ngo bengals";
   editor.cursor = 0;
   editor.lastValue = "";
   editor.lastCursor = 0;
-  scene.add(editor);
+  camera.add(editor);
+  editor.position.set(1, 0, -1.2);
+  editor.rotation.y = -0.1;
 
   // Returns x and y
   editor.cursorPosition = function() {
@@ -193,7 +236,7 @@ function main() {
 
     // Display text
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-    context.fillStyle = "hsla(0, 0%, 100%, 0.8)";
+    context.fillStyle = "hsla(0, 0%, 100%, 0.6)";
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     var lines = editor.value.split("\n")
     for (var i = 0; i < lines.length; ++i) {
@@ -219,49 +262,6 @@ function main() {
     editor.cursor++;
   }
 
-  // Just a bit of ambient light for convenience
-  var ambient = new THREE.AmbientLight(0x333333);
-  scene.add(ambient);
-
-  // The main light source is like an arctic sun
-  var lightAngle = 0;
-  var lightHeight = 300;
-  var lightWidth = 400;
-  var spotLight = new THREE.SpotLight(0xffffff);
-  spotLight.position.set(0, lightHeight, 0);
-  scene.add(spotLight);
-
-  // Position camera
-  camera.position.x = 0;
-  camera.position.y = 3;
-  camera.position.z = 0;
-  
-  CONTROLS = new THREE.PointerLockControls(camera);
-  scene.add(CONTROLS.getObject());
-
-  // An aiming dot
-  var geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
-  var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
-  var aimer = new THREE.Mesh(geometry, material);
-  aimer.visible = false;
-  camera.add(aimer);
-  aimer.position.set(0, 0, -1.1);
-  
-  // Find the object the aimer is aiming at
-  function aimee() {
-    var vector = new THREE.Vector3(0, 0, -1);
-    vector = camera.localToWorld(vector);
-    vector.sub(camera.position);
-    // Now vector is a unit vector with the same direction as the camera
-    var raycaster = new THREE.Raycaster( camera.position, vector);
-
-    var objects = raycaster.intersectObjects(scene.children);
-    if (objects.length == 0) {
-      return null;
-    }
-    return objects[0];
-  }
-  
   Mousetrap.bind("shift", function() {
     if (!editor.visible) {
       aimer.visible = true;
