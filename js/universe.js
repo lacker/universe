@@ -103,24 +103,13 @@ function main() {
   var textMetrics = context.measureText('0');
   var charWidth = textMetrics.width;
   var numCols = Math.floor(CANVAS_SIZE_PX / charWidth);
-  context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-  context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
-  context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
 
   // Put some actual text on it
-  var lines = [
-    "hello world",
-    "multiline works ok",
-    "go bengals"];
-  for (var i = 0; i < lines.length; ++i) {
-    var line = lines[i];
-    context.fillStyle = 'hsl(0, 0%, 25%)';
-    context.fillText(line, 0, FONT_SIZE_PX + FONT_SIZE_PX * i);
-  }
+  var editor = {};
+  editor.text = "hello world\nmultiline works ok\ngo bengals";
 
   // Float it in the air
   var textTexture = new THREE.Texture(canvas);
-  textTexture.needsUpdate = true;
   textTexture.minFilter = THREE.NearestFilter;
   var textAreaMat = new THREE.MeshBasicMaterial(
     {map: textTexture, side: THREE.DoubleSide});
@@ -132,7 +121,35 @@ function main() {
   pane.rotation.y = 0.1;
   scene.add(pane);
 
-  k.down("c", function() {
+  function updateEditorText() {
+    context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+    context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
+    context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+    var lines = editor.text.split("\n")
+    for (var i = 0; i < lines.length; ++i) {
+      var line = lines[i];
+      context.fillStyle = 'hsl(0, 0%, 25%)';
+      context.fillText(line, 0, FONT_SIZE_PX + FONT_SIZE_PX * i);
+    }
+    textTexture.needsUpdate = true;
+  }
+  updateEditorText();
+
+  k.down(["any letter", "any number", "space", "enter"], function() {
+    var key = k.lastKey();
+    if (key == "enter") {
+      key = "\n";
+    }
+    if (key == "space") {
+      key = " ";
+    }
+    console.log(key + " pressed");
+    editor.text += key;
+    console.log("editor text: " + editor.text);
+    updateEditorText();
+  });
+
+  k.down("tab", function() {
     var newColor = choice([
       0x003399, 0x009933,
       0x330099, 0x339900,
