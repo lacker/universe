@@ -90,6 +90,7 @@ function main() {
   scene.add(brick);
 
   // Make a canvas that could have text
+  var textArea = document.querySelector("textarea");
   var FONT_SIZE_PX = 40;
   var NUM_LINES = 20;
   var CANVAS_SIZE_PX = NUM_LINES * FONT_SIZE_PX + FONT_SIZE_PX * 0.2;
@@ -103,8 +104,7 @@ function main() {
   var numCols = Math.floor(CANVAS_SIZE_PX / charWidth);
 
   // Put some actual text on it
-  var editor = {};
-  editor.text = "hello world\nmultiline works ok\ngo bengals";
+  textArea.value = "hello world\nmultiline works ok\ngo bengals";
 
   // Float it in the air
   var textTexture = new THREE.Texture(canvas);
@@ -119,12 +119,12 @@ function main() {
   pane.rotation.y = 0.1;
   scene.add(pane);
 
-  // Alter editor.text yourself before calling this
-  function updateEditorText() {
+  // Gets its text from the text area
+  function updateEditor() {
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-    var lines = editor.text.split("\n")
+    var lines = textArea.value.split("\n")
     for (var i = 0; i < lines.length; ++i) {
       var line = lines[i];
       context.fillStyle = 'hsl(0, 0%, 25%)';
@@ -132,7 +132,7 @@ function main() {
     }
     textTexture.needsUpdate = true;
   }
-  updateEditorText();
+  updateEditor();
 
   // Just a bit of ambient light for convenience
   var ambient = new THREE.AmbientLight(0x333333);
