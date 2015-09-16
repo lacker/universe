@@ -288,6 +288,30 @@ function main() {
     }
     velocity.z = 0;
   }, "keyup");
+  Mousetrap.bind("a", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.x = -0.1;
+  }, "keydown");
+  Mousetrap.bind("a", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.x = 0;
+  }, "keyup");
+  Mousetrap.bind("d", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.x = 0.1;
+  }, "keydown");
+  Mousetrap.bind("d", function() {
+    if (editor.visible) {
+      return;
+    }
+    velocity.x = 0;
+  }, "keyup");
 
 
   // Editor key controls
