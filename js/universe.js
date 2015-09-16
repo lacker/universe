@@ -174,18 +174,21 @@ function main() {
   camera.position.x = 0;
   camera.position.y = 3;
   camera.position.z = 0;
-  camera.lookAt(grass.position);
   
   CONTROLS = new THREE.PointerLockControls(camera);
   scene.add(CONTROLS.getObject());
+
+  // An aiming dot
+  var geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
+  var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
+  var aimer = new THREE.Mesh(geometry, material);
+  camera.add(aimer);
+  aimer.position.set(0, 0, -1.1);
 
   // Start rendering
   function render() {
     requestAnimationFrame(render);
 
-    // Experiment here to see things move
-    // camera.position.y -= 0.01;
-    
     lightAngle += 0.01;
     spotLight.position.x = Math.cos(lightAngle) * lightWidth;
     spotLight.position.z = Math.sin(lightAngle) * lightWidth;
