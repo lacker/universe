@@ -163,6 +163,15 @@ function main() {
     }
   }
 
+  editor.del = function() {
+    if (editor.cursor == 0) {
+      return;
+    }
+    editor.value = (editor.value.slice(0, editor.cursor - 1) +
+                    editor.value.slice(editor.cursor));
+    editor.cursor--;
+  }
+
   editor.cursorUp = function() {
     var pos = editor.cursorPosition();
     editor.setCursorPosition(pos.x, pos.y - 1);
@@ -284,6 +293,12 @@ function main() {
   Mousetrap.bind("down", function() {
     if (editor.visible) {
       editor.cursorDown();
+    }
+  });
+
+  Mousetrap.bind("backspace", function() {
+    if (editor.visible) {
+      editor.del();
     }
   });
 
