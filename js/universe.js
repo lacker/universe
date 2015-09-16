@@ -125,6 +125,7 @@ function main() {
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+    editor.lastValue = textArea.value;
     var lines = textArea.value.split("\n")
     for (var i = 0; i < lines.length; ++i) {
       var line = lines[i];
@@ -193,6 +194,11 @@ function main() {
       console.log(aimee());
     }
   });
+  
+  // Editor testing
+  Mousetrap.bind("e", function() {
+    textArea.value += "e";
+  });
 
   Mousetrap.bind("shift+t", function() {
     if (!editor.visible) {
@@ -209,6 +215,10 @@ function main() {
   // Start rendering
   function render() {
     requestAnimationFrame(render);
+
+    if (editor.lastValue != textArea.value) {
+      updateEditor();
+    }
 
     lightAngle += 0.01;
     spotLight.position.x = Math.cos(lightAngle) * lightWidth;
