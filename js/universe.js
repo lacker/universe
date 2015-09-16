@@ -112,12 +112,13 @@ function main() {
   var textAreaMat = new THREE.MeshBasicMaterial(
     {map: textTexture, side: THREE.DoubleSide});
   textAreaMat.transparent = true;
-  var pane = new THREE.Mesh(
+  var editor = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
     new THREE.MeshBasicMaterial(textAreaMat));
-  pane.position.set(0, 10, -stuffDistance);
-  pane.rotation.y = 0.1;
-  scene.add(pane);
+  editor.position.set(0, 10, -stuffDistance);
+  editor.rotation.y = 0.1;
+  editor.visible = false;
+  scene.add(editor);
 
   // Gets its text from the text area
   function updateEditor() {
@@ -178,7 +179,9 @@ function main() {
   }
   
   Mousetrap.bind("shift", function() {
-    aimer.visible = true;
+    if (!editor.visible) {
+      aimer.visible = true;
+    }
   }, "keydown");
 
   Mousetrap.bind("shift", function() {
@@ -186,7 +189,21 @@ function main() {
   }, "keyup");
 
   Mousetrap.bind("shift+z", function() {
-    console.log(aimee());
+    if (!editor.visible) {
+      console.log(aimee());
+    }
+  });
+
+  Mousetrap.bind("shift+t", function() {
+    if (!editor.visible) {
+      // Displays the text editor for testing
+      editor.visible = true;
+    }
+  });
+
+  Mousetrap.bind("~", function() {
+    // Close the text editor
+    editor.visible = false;
   });
 
   // Start rendering
