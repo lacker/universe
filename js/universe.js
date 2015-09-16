@@ -133,18 +133,31 @@ function main() {
              y: y }
   }
 
+  editor.cursorLeft = function() {
+    if (editor.cursor > 0) {
+      editor.cursor--;
+    }
+  }
+  
+  editor.cursorRight = function() {
+    if (editor.cursor < editor.value.length) {
+      editor.cursor++;
+    }
+  }
+
   // Gets its text from the text area
   editor.update = function() {
     if (editor.value == editor.lastValue &&
         editor.cursor == editor.lastCursor) {
       return;
     }
+    editor.lastValue = editor.value;
+    editor.lastCursor = editor.cursor;
 
     // Display text
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     context.fillStyle = "hsla(0, 0%, 100%, 0.8)";
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-    editor.lastValue = editor.value;
     var lines = editor.value.split("\n")
     for (var i = 0; i < lines.length; ++i) {
       var line = lines[i];
@@ -222,40 +235,28 @@ function main() {
     aimer.visible = false;
   }, "keyup");
 
-  Mousetrap.bind("shift+z", function() {
-    if (!editor.visible) {
-      console.log(aimee());
+  Mousetrap.bind("left", function() {
+    if (editor.visible) {
+      editor.cursorLeft();
     }
   });
-  
-  // Keys that go into the editor
+
+  Mousetrap.bind("right", function() {
+    if (editor.visible) {
+      editor.cursorRight();
+    }
+  });
+
+  // Keys that can go into the editor
   Mousetrap.bind([
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
+    "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    "'", '"', "{", "}", "[", "]", "(", ")", ";", ":", "<", ">", "/",
+    ".", ",", "-", "_", "=", "+", "!", "$", "&", "|", "*",
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+    "\\",
     "space",
     "enter",
   ], function(e) {
@@ -265,13 +266,16 @@ function main() {
         display = "\n";
       }
       editor.insert(display);
-    }
-  });
+      e.preventDefault();
+    } else {
 
-  Mousetrap.bind("shift+t", function() {
-    if (!editor.visible) {
-      // Displays the text editor for testing
-      editor.visible = true;
+      // Commands that have a different meaning outside the editor
+      if (e.key == "T") {
+        editor.visible = true;
+      }
+      if (e.key == "Z") {
+        console.log(aimee());
+      }
     }
   });
 
