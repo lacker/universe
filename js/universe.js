@@ -90,7 +90,6 @@ function main() {
   scene.add(brick);
 
   // Make a canvas that could have text
-  var textArea = document.querySelector("textarea");
   var FONT_SIZE_PX = 40;
   var NUM_LINES = 20;
   var CANVAS_SIZE_PX = NUM_LINES * FONT_SIZE_PX + FONT_SIZE_PX * 0.2;
@@ -102,9 +101,6 @@ function main() {
   var textMetrics = context.measureText('0');
   var charWidth = textMetrics.width;
   var numCols = Math.floor(CANVAS_SIZE_PX / charWidth);
-
-  // Put some actual text on it
-  textArea.value = "hello world\nmultiline works ok\ngo bengals";
 
   // Float it in the air
   var textTexture = new THREE.Texture(canvas);
@@ -118,15 +114,21 @@ function main() {
   editor.position.set(0, 10, -stuffDistance);
   editor.rotation.y = 0.1;
   editor.visible = false;
+  editor.value = "hello world\nmultiline works\ngo bengals";
+  editor.cursor = 0;
+  editor.lastValue = "";
   scene.add(editor);
 
   // Gets its text from the text area
-  function updateEditor() {
+  editor.update = function() {
+    if (editor.value == editor.lastValue) {
+      return;
+    }
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-    editor.lastValue = textArea.value;
-    var lines = textArea.value.split("\n")
+    editor.lastValue = editor.value;
+    var lines = editor.value.split("\n")
     for (var i = 0; i < lines.length; ++i) {
       var line = lines[i];
       context.fillStyle = 'hsl(0, 0%, 25%)';
@@ -134,7 +136,11 @@ function main() {
     }
     textTexture.needsUpdate = true;
   }
-  updateEditor();
+
+  editor.insert = function(text) {
+    editor.value = (editor.value.slice(0, editor.cursor) + text +
+                    editor.value.slice(editor.cursor));
+  }
 
   // Just a bit of ambient light for convenience
   var ambient = new THREE.AmbientLight(0x333333);
@@ -197,7 +203,7 @@ function main() {
   
   // Editor testing
   Mousetrap.bind("e", function() {
-    textArea.value += "e";
+    editor.insert("e");
   });
 
   Mousetrap.bind("shift+t", function() {
@@ -216,9 +222,7 @@ function main() {
   function render() {
     requestAnimationFrame(render);
 
-    if (editor.lastValue != textArea.value) {
-      updateEditor();
-    }
+    editor.update();
 
     lightAngle += 0.01;
     spotLight.position.x = Math.cos(lightAngle) * lightWidth;
