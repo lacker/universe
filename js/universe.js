@@ -140,6 +140,7 @@ function main() {
   editor.insert = function(text) {
     editor.value = (editor.value.slice(0, editor.cursor) + text +
                     editor.value.slice(editor.cursor));
+    editor.cursor++;
   }
 
   // Just a bit of ambient light for convenience
@@ -201,9 +202,44 @@ function main() {
     }
   });
   
-  // Editor testing
-  Mousetrap.bind("e", function() {
-    editor.insert("e");
+  // Keys that go into the editor
+  Mousetrap.bind([
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+    "space",
+    "enter",
+  ], function(e) {
+    if (editor.visible) {
+      var display = e.key;
+      if (display == "Enter") {
+        display = "\n";
+      }
+      editor.insert(display);
+    }
   });
 
   Mousetrap.bind("shift+t", function() {
