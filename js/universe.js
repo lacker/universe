@@ -1,16 +1,10 @@
-// palette:
-// 990033 - red
-// 669900 - green
-// 0099FF - light blue 
-// 0033CC - dark blue
-
 var CONTROLS;
 var HAVE_POINTER_LOCK = checkForPointerLock();
 
 function checkForPointerLock() {
-  return 'pointerLockElement' in document || 
-         'mozPointerLockElement' in document || 
-         'webkitPointerLockElement' in document;
+  return "pointerLockElement" in document || 
+         "mozPointerLockElement" in document || 
+         "webkitPointerLockElement" in document;
 }
 
 function initPointerLock() {
@@ -30,24 +24,24 @@ function initPointerLock() {
     };
 
     var pointerlockerror = function(event) {
-      element.innerHTML = 'PointerLock Error';
+      element.innerHTML = "PointerLock Error";
     };
 
-    document.addEventListener('pointerlockchange', pointerlockchange, false);
-    document.addEventListener('mozpointerlockchange', pointerlockchange, false);
-    document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
+    document.addEventListener("pointerlockchange", pointerlockchange, false);
+    document.addEventListener("mozpointerlockchange", pointerlockchange, false);
+    document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
 
-    document.addEventListener('pointerlockerror', pointerlockerror, false);
-    document.addEventListener('mozpointerlockerror', pointerlockerror, false);
-    document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
+    document.addEventListener("pointerlockerror", pointerlockerror, false);
+    document.addEventListener("mozpointerlockerror", pointerlockerror, false);
+    document.addEventListener("webkitpointerlockerror", pointerlockerror, false);
 
     var requestPointerLock = function(event) {
       element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
       element.requestPointerLock();
     };
-    element.addEventListener('click', requestPointerLock, false);
+    element.addEventListener("click", requestPointerLock, false);
   } else {
-    element.innerHTML = 'Bad browser; No pointer lock';
+    element.innerHTML = "Bad browser; No pointer lock";
   }
 }
 
@@ -96,9 +90,9 @@ function main() {
   var canvas = document.createElement("canvas");
   canvas.width = canvas.height = CANVAS_SIZE_PX;
   var context = canvas.getContext("2d");
-  context.font = FONT_SIZE_PX + 'px Inconsolata,monospace';
-  context.globalCompositeOperation = 'darker';
-  var textMetrics = context.measureText('0');
+  context.font = FONT_SIZE_PX + "px Inconsolata,monospace";
+  context.globalCompositeOperation = "darker";
+  var textMetrics = context.measureText("0");
   var charWidth = textMetrics.width;
   var numCols = Math.floor(CANVAS_SIZE_PX / charWidth);
 
@@ -117,21 +111,23 @@ function main() {
   editor.value = "hello world\nmultiline works\ngo bengals";
   editor.cursor = 0;
   editor.lastValue = "";
+  editor.lastCursor = 0;
   scene.add(editor);
 
   // Gets its text from the text area
   editor.update = function() {
-    if (editor.value == editor.lastValue) {
+    if (editor.value == editor.lastValue &&
+        editor.cursor == editor.lastCursor) {
       return;
     }
     context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-    context.fillStyle = 'hsla(0, 0%, 100%, 0.8)';
+    context.fillStyle = "hsla(0, 0%, 100%, 0.8)";
     context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
     editor.lastValue = editor.value;
     var lines = editor.value.split("\n")
     for (var i = 0; i < lines.length; ++i) {
       var line = lines[i];
-      context.fillStyle = 'hsl(0, 0%, 25%)';
+      context.fillStyle = "hsl(0, 0%, 25%)";
       context.fillText(line, 0, FONT_SIZE_PX + FONT_SIZE_PX * i);
     }
     textTexture.needsUpdate = true;
