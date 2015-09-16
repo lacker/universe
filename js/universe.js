@@ -133,6 +133,24 @@ function main() {
              y: y }
   }
 
+  editor.setCursorPosition = function(x, y) {
+    var acc = 0;
+    var lines = editor.value.split("\n");
+    for (var i = 0; i < lines.length; ++i) {
+      var line = lines[i];
+      if (i > y) {
+        break;
+      }
+      if (i == y) {
+        acc += Math.min(x, line.length);
+        break;
+      }
+      acc += line.length + 1;
+    }
+
+    editor.cursor = acc;
+  }
+
   editor.cursorLeft = function() {
     if (editor.cursor > 0) {
       editor.cursor--;
@@ -143,6 +161,16 @@ function main() {
     if (editor.cursor < editor.value.length) {
       editor.cursor++;
     }
+  }
+
+  editor.cursorUp = function() {
+    var pos = editor.cursorPosition();
+    editor.setCursorPosition(pos.x, pos.y - 1);
+  }
+
+  editor.cursorDown = function() {
+    var pos = editor.cursorPosition();
+    editor.setCursorPosition(pos.x, pos.y + 1);
   }
 
   // Gets its text from the text area
@@ -244,6 +272,18 @@ function main() {
   Mousetrap.bind("right", function() {
     if (editor.visible) {
       editor.cursorRight();
+    }
+  });
+
+  Mousetrap.bind("up", function() {
+    if (editor.visible) {
+      editor.cursorUp();
+    }
+  });
+
+  Mousetrap.bind("down", function() {
+    if (editor.visible) {
+      editor.cursorDown();
     }
   });
 
