@@ -162,6 +162,21 @@ function main() {
   camera.add(aimer);
   aimer.position.set(0, 0, -1.1);
   
+  // Find the object the aimer is aiming at
+  function aimee() {
+    var vector = new THREE.Vector3(0, 0, -1);
+    vector = camera.localToWorld(vector);
+    vector.sub(camera.position);
+    // Now vector is a unit vector with the same direction as the camera
+    var raycaster = new THREE.Raycaster( camera.position, vector);
+
+    var objects = raycaster.intersectObjects(scene.children);
+    if (objects.length == 0) {
+      return null;
+    }
+    return objects[0];
+  }
+  
   Mousetrap.bind("shift", function() {
     aimer.visible = true;
   }, "keydown");
@@ -169,6 +184,10 @@ function main() {
   Mousetrap.bind("shift", function() {
     aimer.visible = false;
   }, "keyup");
+
+  Mousetrap.bind("shift+z", function() {
+    console.log(aimee());
+  });
 
   // Start rendering
   function render() {
