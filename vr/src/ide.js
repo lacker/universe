@@ -61,7 +61,7 @@ aimer.position.set(0, 0, -1.1);
 
 // The canvas for the editor
 var FONT_SIZE_PX = 40;
-var NUM_LINES = 20;
+var NUM_LINES = 40;
 var CANVAS_SIZE_PX = NUM_LINES * FONT_SIZE_PX + FONT_SIZE_PX * 0.2;
 var canvas = document.createElement("canvas");
 canvas.width = canvas.height = CANVAS_SIZE_PX;
@@ -78,7 +78,7 @@ textTexture.minFilter = THREE.NearestFilter;
 textTexture.wrapS = THREE.ClampToEdgeWrapping;
 textTexture.wrapT = THREE.ClampToEdgeWrapping;
 textTexture.repeat.set(1, 1);
-var geometry = new THREE.PlaneGeometry(1, 1);
+var geometry = new THREE.PlaneGeometry(2, 2);
 var material = new THREE.MeshBasicMaterial({
   map: textTexture,
   color: 0xFFFFFF,
@@ -91,12 +91,6 @@ editor.value = "hello world\nmultiline works";
 editor.cursor = 0;
 editor.lastValue = "";
 editor.lastCursor = 0;
-editor.position.set(0, 1, -3);
-
-// Temp hackiness to start with the editor showing things
-context.fillStyle = "hsla(0, 0%, 100%, 0.6)";
-context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
-textTexture.needsUpdate = true;
 
 // Functionality for the editor
 // Returns x and y
@@ -233,6 +227,16 @@ function animate(timestamp) {
     aimer.rotation.copy(camera.rotation);
   }
 
+  if (editor.visible) {
+    // Keep the editor in front of us
+    var vector = new THREE.Vector3(1.4, 0.3, -2);
+    vector.applyQuaternion(camera.quaternion);
+    editor.position.copy(camera.position);
+    editor.position.add(vector);
+    editor.rotation.copy(camera.rotation);
+    editor.rotation.y -= 0.1;
+  }
+
   editor.update();
 
   // Update VR headset position and apply to camera.
@@ -353,6 +357,31 @@ function onKeyDown(e) {
       console.log("inserting: " + key);
       editor.insert(key);
 
+      e.preventDefault();
+      break;
+
+    case "ArrowUp":
+      editor.cursorUp();
+      e.preventDefault();
+      break;
+
+    case "ArrowDown":
+      editor.cursorDown();
+      e.preventDefault();
+      break;
+
+    case "ArrowLeft":
+      editor.cursorLeft();
+      e.preventDefault();
+      break;
+
+    case "ArrowRight":
+      editor.cursorRight();
+      e.preventDefault();
+      break;
+
+    case "Backspace":
+      editor.del();
       e.preventDefault();
       break;
     }
