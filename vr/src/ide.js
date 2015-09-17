@@ -55,7 +55,7 @@ floor.position.y = -1 - (numRepeats / 2);
 var geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
 var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
 var aimer = new THREE.Mesh(geometry, material);
-aimer.visible = true;
+aimer.visible = false;
 scene.add(aimer);
 aimer.position.set(0, 0, -1.1);
 
@@ -87,17 +87,22 @@ animate();
 // Mock editor object til it really exists
 var editor = {visible: false};
 
-// Handling keypresses
-Mousetrap.bind("shift", function() {
-  if (!editor.visible) {
-    aimer.visible = true;
+function onKeyDown(e) {
+  if (editor.visible) {
+
+  } else {
+    if (e.key == "Shift") {
+      aimer.visible = true;
+    }
   }
-}, "keydown");
-
-Mousetrap.bind("shift", function() {
-  aimer.visible = false;
-}, "keyup");
-
+};
+window.addEventListener("keydown", onKeyDown, true);
+function onKeyUp(e) {
+  if (e.key == "Shift") {
+    aimer.visible = false;
+  }
+};
+window.addEventListener("keyup", onKeyUp, true);
 
 // Handle window resizes
 function onWindowResize() {
