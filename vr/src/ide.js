@@ -86,13 +86,14 @@ var material = new THREE.MeshBasicMaterial({
 });
 var editor = new THREE.Mesh(geometry, material);
 scene.add(editor);
+editor.visible = true;
 editor.value = "hello world\nmultiline works";
 editor.cursor = 0;
 editor.lastValue = "";
 editor.lastCursor = 0;
 editor.position.set(0, 1, -3);
 
-// Temp hackiness for showing something - XXX
+// Temp hackiness to start with the editor showing things
 context.fillStyle = "hsla(0, 0%, 100%, 0.6)";
 context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
 textTexture.needsUpdate = true;
@@ -136,9 +137,6 @@ function animate(timestamp) {
 
 // Kick off animation loop
 animate();
-
-// Mock editor
-var editor = {visible: false};
 
 // Handle keypresses
 function onKeyDown(e) {
@@ -241,22 +239,30 @@ function onKeyDown(e) {
     }
   } else {
     switch(e.key) {
+    case "e":
     case "E":
-      editor.visible = true;
+      if (aimer.visible) {
+        editor.visible = true;
+        aimer.visible = false;
+      }
       break;
     case "Shift":
       aimer.visible = true;
       break;
     case "w":
+    case "W":
       velocity.z = -0.1;
       break;
     case "s":
+    case "S":
       velocity.z = 0.1;
       break;
     case "a":
+    case "A":
       velocity.x = -0.1;
       break;
     case "d":
+    case "D":
       velocity.x = 0.1;
       break;
     }
