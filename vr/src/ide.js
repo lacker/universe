@@ -59,6 +59,44 @@ aimer.visible = false;
 scene.add(aimer);
 aimer.position.set(0, 0, -1.1);
 
+// The canvas for the editor
+var FONT_SIZE_PX = 40;
+var NUM_LINES = 20;
+var CANVAS_SIZE_PX = NUM_LINES * FONT_SIZE_PX + FONT_SIZE_PX * 0.2;
+var canvas = document.createElement("canvas");
+canvas.width = canvas.height = CANVAS_SIZE_PX;
+var context = canvas.getContext("2d");
+context.font = FONT_SIZE_PX + "px Inconsolata,monospace";
+context.globalCompositeOperation = "darker";
+var textMetrics = context.measureText("0");
+var charWidth = textMetrics.width;
+var numCols = Math.floor(CANVAS_SIZE_PX / charWidth);
+
+// The display pane for the editor
+var textTexture = new THREE.Texture(canvas);
+textTexture.minFilter = THREE.NearestFilter;
+textTexture.wrapS = THREE.ClampToEdgeWrapping;
+textTexture.wrapT = THREE.ClampToEdgeWrapping;
+textTexture.repeat.set(1, 1);
+var geometry = new THREE.PlaneGeometry(1, 1);
+var material = new THREE.MeshBasicMaterial({
+  map: textTexture,
+  color: 0xFFFFFF,
+  side: THREE.DoubleSide
+});
+var editor = new THREE.Mesh(geometry, material);
+scene.add(editor);
+editor.value = "hello world\nmultiline works";
+editor.cursor = 0;
+editor.lastValue = "";
+editor.lastCursor = 0;
+editor.position.set(0, 1, -3);
+
+// Temp hackiness for showing something - XXX
+context.fillStyle = "hsla(0, 0%, 100%, 0.6)";
+context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+textTexture.needsUpdate = true;
+
 // Player's velocity in camera-space with y projected out
 var velocity = {x: 0, z: 0};
 
@@ -99,15 +137,113 @@ function animate(timestamp) {
 // Kick off animation loop
 animate();
 
-// Mock editor object til it really exists
+// Mock editor
 var editor = {visible: false};
 
 // Handle keypresses
 function onKeyDown(e) {
   if (editor.visible) {
+    switch(e.key) {
+    case "`":
+      editor.visible = false;
+      break;
 
+    case "a":
+    case "b":
+    case "c":
+    case "d":
+    case "e":
+    case "f":
+    case "g":
+    case "h":
+    case "i":
+    case "j":
+    case "k":
+    case "l":
+    case "m":
+    case "n":
+    case "o":
+    case "p":
+    case "q":
+    case "r":
+    case "s":
+    case "t":
+    case "u":
+    case "v":
+    case "w":
+    case "x":
+    case "y":
+    case "z":
+    case "A":
+    case "B":
+    case "C":
+    case "D":
+    case "E":
+    case "F":
+    case "G":
+    case "H":
+    case "I":
+    case "J":
+    case "K":
+    case "L":
+    case "M":
+    case "N":
+    case "O":
+    case "P":
+    case "Q":
+    case "R":
+    case "S":
+    case "T":
+    case "U":
+    case "V":
+    case "W":
+    case "X":
+    case "Y":
+    case "Z":
+    case "'":
+    case '"':
+    case "{":
+    case "}":
+    case "[":
+    case "]":
+    case "(":
+    case ")":
+    case ";":
+    case ":":
+    case "<":
+    case ">":
+    case "/":
+    case ".":
+    case ",":
+    case "-":
+    case "_":
+    case "=":
+    case "+":
+    case "!":
+    case "$":
+    case "&":
+    case "|":
+    case "*":
+    case "0":
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+    case "5":
+    case "6":
+    case "7":
+    case "8":
+    case "9":
+    case "\\":
+      // TODO: insert to display
+      e.preventDefault();
+      break;
+    }
   } else {
     switch(e.key) {
+    case "E":
+      editor.visible = true;
+      break;
     case "Shift":
       aimer.visible = true;
       break;
