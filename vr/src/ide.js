@@ -69,6 +69,11 @@ function animate(timestamp) {
     var vector = new THREE.Vector3(velocity.x, 0, velocity.z);
     vector.applyQuaternion(camera.quaternion);
 
+    // Project and rescale to keep motion in the y=0 plane
+    var len = vector.length();
+    vector.y = 0;
+    vector.setLength(len);
+
     // Move the camera
     camera.position.add(vector);
   }
