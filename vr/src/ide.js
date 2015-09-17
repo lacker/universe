@@ -34,17 +34,6 @@ effect.setSize(window.innerWidth, window.innerHeight);
 // Create a VR manager helper to enter and exit VR mode.
 var manager = new WebVRManager(renderer, effect, {hideButton: false});
 
-// Create 3D objects.
-var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-var material = new THREE.MeshNormalMaterial();
-var cube = new THREE.Mesh(geometry, material);
-
-// Position cube mesh
-cube.position.z = -1;
-
-// Add cube mesh to your three.js scene
-scene.add(cube);
-
 // Also add a repeating grid as a skybox.
 var boxWidth = 10;
 var texture = THREE.ImageUtils.loadTexture(
@@ -66,9 +55,6 @@ scene.add(skybox);
 
 // Request animation frame loop function
 function animate(timestamp) {
-  // Apply rotation to cube mesh
-  cube.rotation.y += 0.01;
-
   // Update VR headset position and apply to camera.
   controls.update();
 
@@ -82,13 +68,14 @@ function animate(timestamp) {
 animate();
 
 // Reset the position sensor when 'z' pressed.
-function onKey(event) {
+function onKeyDown(event) {
   if (event.keyCode == 90) { // z
     controls.resetSensor();
   }
 };
 
-window.addEventListener('keydown', onKey, true);
+window.addEventListener('keydown', onKeyDown, true);
+window.addEventListener('keyup', onKeyUp, true);
 
 // Handle window resizes
 function onWindowResize() {
