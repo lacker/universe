@@ -59,9 +59,19 @@ aimer.visible = false;
 scene.add(aimer);
 aimer.position.set(0, 0, -1.1);
 
+// Player's velocity in camera-space with y projected out
+var velocity = {x: 0, z: 0};
+
 // Request animation frame loop function
 function animate(timestamp) {
-  camera.position.z += 0.01;
+  if (velocity.x != 0 || velocity.z != 0) {
+    // Turn our velocity vector in the camera direction
+    var vector = new THREE.Vector3(velocity.x, 0, velocity.z);
+    vector.applyQuaternion(camera.quaternion);
+
+    // Move the camera
+    camera.position.add(vector);
+  }
 
   if (aimer.visible) {
     // Keep the aimer right in front of us
@@ -92,8 +102,22 @@ function onKeyDown(e) {
   if (editor.visible) {
 
   } else {
-    if (e.key == "Shift") {
+    switch(e.key) {
+    case "Shift":
       aimer.visible = true;
+      break;
+    case "w":
+      velocity.z = -0.1;
+      break;
+    case "s":
+      velocity.z = 0.1;
+      break;
+    case "a":
+      velocity.x = -0.1;
+      break;
+    case "d":
+      velocity.x = 0.1;
+      break;
     }
   }
 };
@@ -102,8 +126,18 @@ function onKeyUp(e) {
   if (editor.visible) {
 
   } else {
-    if (e.key == "Shift") {
+    switch(e.key) {
+    case "Shift":
       aimer.visible = false;
+      break;
+    case "w":
+    case "s":
+      velocity.z = 0;
+      break;
+    case "a":
+    case "d":
+      velocity.x = 0;
+      break;
     }
   }
 };
