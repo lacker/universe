@@ -51,9 +51,26 @@ var floor = new THREE.Mesh(geometry, material);
 scene.add(floor);
 floor.position.y = -1 - (numRepeats / 2);
 
+// An aiming dot
+var geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
+var aimer = new THREE.Mesh(geometry, material);
+aimer.visible = true;
+scene.add(aimer);
+aimer.position.set(0, 0, -1.1);
+
 // Request animation frame loop function
 function animate(timestamp) {
-  floor.position.z -= 0.01;
+  camera.position.z += 0.01;
+
+  if (aimer.visible) {
+    // Keep the aimer right in front of us
+    var vector = new THREE.Vector3(0, 0, -2);
+    vector.applyQuaternion(camera.quaternion);
+    aimer.position.copy(camera.position);
+    aimer.position.add(vector);
+    aimer.rotation.copy(camera.rotation);
+  }
 
   // Update VR headset position and apply to camera.
   controls.update();
@@ -67,18 +84,20 @@ function animate(timestamp) {
 // Kick off animation loop
 animate();
 
-// Reset the position sensor when 'z' pressed.
-function onKeyDown(event) {
-  if (event.keyCode == 90) { // z
-    controls.resetSensor();
+// Mock editor object til it really exists
+var editor = {visible: false};
+
+// Handling keypresses
+Mousetrap.bind("shift", function() {
+  if (!editor.visible) {
+    aimer.visible = true;
   }
-}
+}, "keydown");
 
-function onKeyUp(event) {
-}
+Mousetrap.bind("shift", function() {
+  aimer.visible = false;
+}, "keyup");
 
-window.addEventListener('keydown', onKeyDown, true);
-window.addEventListener('keyup', onKeyUp, true);
 
 // Handle window resizes
 function onWindowResize() {
@@ -87,5 +106,4 @@ function onWindowResize() {
 
   effect.setSize(window.innerWidth, window.innerHeight);
 }
-
 window.addEventListener('resize', onWindowResize, false);
