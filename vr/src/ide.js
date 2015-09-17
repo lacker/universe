@@ -87,6 +87,7 @@ animate();
 // Mock editor object til it really exists
 var editor = {visible: false};
 
+// Handle keypresses
 function onKeyDown(e) {
   if (editor.visible) {
 
@@ -98,8 +99,12 @@ function onKeyDown(e) {
 };
 window.addEventListener("keydown", onKeyDown, true);
 function onKeyUp(e) {
-  if (e.key == "Shift") {
-    aimer.visible = false;
+  if (editor.visible) {
+
+  } else {
+    if (e.key == "Shift") {
+      aimer.visible = false;
+    }
   }
 };
 window.addEventListener("keyup", onKeyUp, true);
