@@ -34,27 +34,27 @@ effect.setSize(window.innerWidth, window.innerHeight);
 // Create a VR manager helper to enter and exit VR mode.
 var manager = new WebVRManager(renderer, effect, {hideButton: false});
 
-// Also add a repeating grid as a skybox.
-var boxWidth = 10;
+// Add a repeating grid as a floor.
+var numRepeats = 1000;
 var texture = THREE.ImageUtils.loadTexture(
   'img/box.png'
 );
 texture.wrapS = THREE.RepeatWrapping;
 texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(boxWidth, boxWidth);
-
-var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+texture.repeat.set(numRepeats, numRepeats);
+var geometry = new THREE.BoxGeometry(numRepeats, numRepeats, numRepeats);
 var material = new THREE.MeshBasicMaterial({
   map: texture,
-  color: 0x333333,
-  side: THREE.BackSide
+  color: 0x333333
 });
-
-var skybox = new THREE.Mesh(geometry, material);
-scene.add(skybox);
+var floor = new THREE.Mesh(geometry, material);
+scene.add(floor);
+floor.position.y = -1 - (numRepeats / 2);
 
 // Request animation frame loop function
 function animate(timestamp) {
+  floor.position.z -= 0.01;
+
   // Update VR headset position and apply to camera.
   controls.update();
 
@@ -72,7 +72,10 @@ function onKeyDown(event) {
   if (event.keyCode == 90) { // z
     controls.resetSensor();
   }
-};
+}
+
+function onKeyUp(event) {
+}
 
 window.addEventListener('keydown', onKeyDown, true);
 window.addEventListener('keyup', onKeyUp, true);
