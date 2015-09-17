@@ -354,7 +354,6 @@ function onKeyDown(e) {
         key = "\n";
       }
 
-      console.log("inserting: " + key);
       editor.insert(key);
 
       e.preventDefault();
