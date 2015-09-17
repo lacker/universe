@@ -86,7 +86,7 @@ var material = new THREE.MeshBasicMaterial({
 });
 var editor = new THREE.Mesh(geometry, material);
 scene.add(editor);
-editor.visible = true;
+editor.visible = false;
 editor.value = "hello world\nmultiline works";
 editor.cursor = 0;
 editor.lastValue = "";
@@ -97,6 +97,113 @@ editor.position.set(0, 1, -3);
 context.fillStyle = "hsla(0, 0%, 100%, 0.6)";
 context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
 textTexture.needsUpdate = true;
+
+// Functionality for the editor
+// Returns x and y
+editor.cursorPosition = function() {
+  var x = 0;
+  var y = 0;
+  var remaining = editor.cursor;
+  var lines = editor.value.split("\n");
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i];
+    if (remaining <= line.length) {
+      x = remaining;
+      break;
+    }
+    y++;
+    remaining -= (line.length + 1);
+  }
+  return { x: x,
+           y: y }
+}
+
+editor.setCursorPosition = function(x, y) {
+  var acc = 0;
+  var lines = editor.value.split("\n");
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i];
+    if (i > y) {
+      break;
+    }
+    if (i == y) {
+      acc += Math.min(x, line.length);
+      break;
+    }
+    acc += line.length + 1;
+  }
+  
+  editor.cursor = acc;
+}
+
+editor.cursorLeft = function() {
+  if (editor.cursor > 0) {
+    editor.cursor--;
+  }
+}
+
+editor.cursorRight = function() {
+  if (editor.cursor < editor.value.length) {
+    editor.cursor++;
+  }
+}
+
+editor.del = function() {
+  if (editor.cursor == 0) {
+    return;
+  }
+  editor.value = (editor.value.slice(0, editor.cursor - 1) +
+                  editor.value.slice(editor.cursor));
+  editor.cursor--;
+}
+
+editor.cursorUp = function() {
+  var pos = editor.cursorPosition();
+  editor.setCursorPosition(pos.x, pos.y - 1);
+}
+
+editor.cursorDown = function() {
+  var pos = editor.cursorPosition();
+  editor.setCursorPosition(pos.x, pos.y + 1);
+}
+
+// Gets its text from the text area
+editor.update = function() {
+  if (editor.value == editor.lastValue &&
+      editor.cursor == editor.lastCursor) {
+    return;
+  }
+  editor.lastValue = editor.value;
+  editor.lastCursor = editor.cursor;
+
+  // Display text
+  context.clearRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+  context.fillStyle = "hsla(0, 0%, 100%, 0.6)";
+  context.fillRect(0, 0, CANVAS_SIZE_PX, CANVAS_SIZE_PX);
+  var lines = editor.value.split("\n")
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i];
+    context.fillStyle = "hsl(0, 0%, 25%)";
+    context.fillText(line, 0, FONT_SIZE_PX + FONT_SIZE_PX * i);
+  }
+
+  // Display the cursor
+  var pos = editor.cursorPosition();
+  context.fillRect(
+    pos.x * charWidth,
+    (pos.y + 0.2) * FONT_SIZE_PX,
+    5, // cursor width
+    FONT_SIZE_PX);
+
+  textTexture.needsUpdate = true;
+}
+
+editor.insert = function(text) {
+  editor.value = (editor.value.slice(0, editor.cursor) + text +
+                  editor.value.slice(editor.cursor));
+  editor.cursor++;
+}
+
 
 // Player's velocity in camera-space with y projected out
 var velocity = {x: 0, z: 0};
@@ -125,6 +232,8 @@ function animate(timestamp) {
     aimer.position.add(vector);
     aimer.rotation.copy(camera.rotation);
   }
+
+  editor.update();
 
   // Update VR headset position and apply to camera.
   controls.update();
@@ -233,10 +342,21 @@ function onKeyDown(e) {
     case "8":
     case "9":
     case "\\":
-      // TODO: insert to display
+    case " ":
+    case "Enter":
+
+      var key = e.key;
+      if (key == "Enter") {
+        key = "\n";
+      }
+
+      console.log("inserting: " + key);
+      editor.insert(key);
+
       e.preventDefault();
       break;
     }
+
   } else {
     switch(e.key) {
     case "e":
