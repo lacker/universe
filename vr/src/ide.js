@@ -52,7 +52,7 @@ scene.add(floor);
 floor.position.y = -1 - (numRepeats / 2);
 
 // An aiming dot
-var geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+var geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
 var material = new THREE.MeshBasicMaterial({color: 0xFF0000});
 var aimer = new THREE.Mesh(geometry, material);
 aimer.visible = true;
@@ -65,7 +65,7 @@ function animate(timestamp) {
 
   if (aimer.visible) {
     // Keep the aimer right in front of us
-    var vector = new THREE.Vector3(0, 0, -2);
+    var vector = new THREE.Vector3(0, 0, -0.9);
     vector.applyQuaternion(camera.quaternion);
     aimer.position.copy(camera.position);
     aimer.position.add(vector);
