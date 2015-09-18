@@ -43,14 +43,18 @@ export default class World extends React.Component {
     props.registerAddObject(this.addObject.bind(this));
   }
 
+  // Returns whether it was successful
   addObject(str, x, z) {
     var component = parseJSX(str);
     if (!component) {
-      return;
+      console.log("could not parse jsx: " + str);
+      return false;
     }
+    console.log("adding " + str);
     component.props.position = { x: x, y: 0, z: z };
     this.state.children.push(component);
     this.forceUpdate();
+    return true;
   }
 
   render() {

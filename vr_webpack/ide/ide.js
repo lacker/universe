@@ -108,6 +108,7 @@ editor.value = "hello world\nmultiline works";
 editor.cursor = 0;
 editor.lastValue = "";
 editor.lastCursor = 0;
+editor.task = "none";
 
 // Functionality for the editor
 // Returns x and y
@@ -282,12 +283,30 @@ function animate(timestamp) {
 // Kick off animation loop
 animate();
 
+// Returns whether the task is actually finished.
+function finishEditorTask(task, params, string) {
+  if (task == "create") {
+    var success = addObject(string, params.x, params.z);
+    return success;
+  }
+
+  console.log("unknown task: " + task);
+  return false;
+}
+
 // Handle keypresses
 function onKeyDown(e) {
   if (editor.visible) {
     switch(e.key) {
     case "`":
-      editor.visible = false;
+      if (finishEditorTask(editor.task, editor.params, editor.value)) {
+        editor.task = "none";
+        editor.params = null;
+        editor.value = "";
+        editor.visible = false;
+      } else {
+        // We failed to exit the editor
+      }
       break;
 
     case "a":
@@ -422,12 +441,18 @@ function onKeyDown(e) {
     case "C":
       // "Create" functionality
       if (aimer.visible) {
-        console.log(floorSpot());
+        var spot = floorSpot();
+        if (spot != null) {
+          editor.visible = true;
+          editor.task = "create";
+          editor.params = {x: spot.x, y: spot.y, z: spot.z};
+          editor.value = "";
+        }
       }
       break;
     case "e":
     case "E":
-      // "Edit" functionality
+      // "Edit" functionality?
       if (aimer.visible) {
         editor.visible = true;
         aimer.visible = false;
