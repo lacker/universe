@@ -38,6 +38,19 @@ function registerAddObject(fn) {
 }
 var scene = Reoculus.render(<World registerAddObject={registerAddObject} />);
 
+// Returns a list of all meshes
+function findMeshes(obj) {
+  if (obj.type == "Mesh" && obj.cid) {
+    return [obj];
+  }
+  var answer = [];
+  for (var kid of obj.children) {
+    answer = answer.concat(findMeshes(kid));
+  }
+  return answer;
+}
+window.foo = function() { return findMeshes(scene); }
+
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.3, 10000);
 
@@ -234,6 +247,26 @@ function floorSpot() {
   return spots[0].point;
 }
 
+// Return the react component that the camera is looking at.
+// Returns null if there isn't one.
+function targetComponent() {
+  var vector = new THREE.Vector3(0, 0, -1);
+  vector = camera.localToWorld(vector);
+  vector.sub(camera.position);
+  var raycaster = new THREE.Raycaster(camera.position, vector);
+
+  var spots = raycaster.intersectObjects(findMeshes(scene));
+
+  if (spots.length == 0) {
+    return null;
+  }
+  var object = spots[0].object;
+  window.xxx = object;
+  console.log("targetComponent found something");
+  console.log(object);
+  console.log("cid: " + object.cid);
+}
+
 // Request animation frame loop function
 function animate(timestamp) {
   if (velocity.x != 0 || velocity.z != 0) {
@@ -295,6 +328,11 @@ function finishEditorTask(task, params, string) {
       editor.lastCreation = string;
     }
     return success;
+  }
+
+  if (task == "edit") {
+    console.log("TODO: finish edit task");
+    return false;
   }
 
   console.log("unknown task: " + task);
@@ -455,6 +493,7 @@ function onKeyDown(e) {
         editor.params = {x: spot.x, y: spot.y, z: spot.z};
         editor.value = "";
         editor.cursor = 0;
+        aimer.visible = false;
       }
       break;
     case "g":
@@ -469,10 +508,10 @@ function onKeyDown(e) {
       break;
     case "e":
     case "E":
-      // "Edit" functionality?
-      if (aimer.visible) {
-        editor.visible = true;
-        aimer.visible = false;
+      // "Edit" functionality
+      var component = targetComponent();
+      if (component != null) {
+        console.log("targeting component: " + component.jsxSource);
       }
       break;
     case "Shift":

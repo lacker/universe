@@ -52,6 +52,11 @@ export default class Component {
 
     var props = this._currentElement.props;
     var tag = constructTag(this._currentElement.type, props);
+    tag.cid = props.cid;
+
+    // DEBUG
+    console.log("assigning " + tag.cid + " to tag:");
+    console.log(tag);
 
     var parent = Scene.getParent(rootID);
     parent.add(tag);

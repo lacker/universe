@@ -34,6 +34,8 @@ function parseJSX(str) {
   };
 }
 
+var NEXT = { CID: 1 };
+
 export default class World extends React.Component {
   constructor(props) {
     super();
@@ -41,18 +43,37 @@ export default class World extends React.Component {
       children: []
     };
     props.registerAddObject(this.addObject.bind(this));
+    
+    // Hacky world registration
+    window.worldObject = this;
   }
 
   // Returns whether it was successful
-  addObject(str, x, z) {
+  addObject(str, x, z, cid) {
     var component = parseJSX(str);
     if (!component) {
       console.log("could not parse jsx: " + str);
       return false;
     }
+    component.jsxSource = str;
     console.log("adding " + str);
     component.props.position = { x: x, y: 0, z: z };
-    this.state.children.push(component);
+    if (!cid) {
+      cid = "cid" + NEXT.CID;
+      NEXT.CID++;
+    }
+    console.log("creating " + cid);
+    component.props.cid = cid;
+
+    // Remove any children that already have this cid
+    var newChildren = [];
+    for (var child of this.state.children) {
+      if (child.props.cid != cid) {
+        newChildren.push(child);
+      }
+    }
+    newChildren.push(component);
+    this.state.children = newChildren;
     this.forceUpdate();
     return true;
   }
