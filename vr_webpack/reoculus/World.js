@@ -31,11 +31,11 @@ function parseJSX(str) {
       i++;
       continue;
     }
+    if (str.substr(i) === '/>') {
+      return { tag, props };
+    }
     if (latestProp === null) {
       var propEnd = str.indexOf('=', i);
-      if (propEnd < 0) {
-        return { tag, props };
-      }
       latestProp = str.substring(i, propEnd);
       i = propEnd + 1;
       continue;
@@ -46,7 +46,6 @@ function parseJSX(str) {
         var bracket = bracketStack.pop();
         if (bracketStack.length === 0) {
           var contents = str.substring(bracket.pos + 1, i);
-          console.log(contents);
           props[latestProp] = Function('return ' + contents)();
           latestProp = null;
         }
