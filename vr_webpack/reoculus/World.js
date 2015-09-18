@@ -73,7 +73,9 @@ export default class World extends React.Component {
     this.forceUpdate();
   }
 
-  // Returns whether it was successful
+  // Returns whether it was successful.
+  // This will not overwrite an already-existing cid!
+  // You have to do that yourself.
   addObject(str, x, z, cid) {
     var component = parseJSX(str);
     if (!component) {
@@ -89,8 +91,6 @@ export default class World extends React.Component {
     }
     console.log("creating " + cid);
     component.props.cid = cid;
-
-    this.removeCID(cid);
 
     this.state.children.push(component);
     this.forceUpdate();

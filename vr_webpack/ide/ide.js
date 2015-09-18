@@ -49,7 +49,16 @@ function findMeshes(obj) {
   }
   return answer;
 }
-window.foo = function() { return findMeshes(scene); }
+
+function hackyRemoveCID(cid) {
+  var meshes = findMeshes(scene);
+  for (var mesh of meshes) {
+    if (mesh.cid == cid) {
+      mesh.cid = null;
+      mesh.visible = false;
+    }
+  }
+}
 
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.3, 10000);
@@ -331,8 +340,10 @@ function finishEditorTask(task, params, string) {
   }
 
   if (task == "edit") {
-    var success = addObject(string, params.x, params.z, params.cid);
+    var success = addObject(string, params.x, params.z);
     if (success) {
+      hackyRemoveCID(params.cid);
+      window.worldObject.removeCID(params.cid);
       editor.lastCreation = string;
     }
     return success;
@@ -530,6 +541,7 @@ function onKeyDown(e) {
       // "Delete" functionality
       var component = targetComponent();
       if (component != null) {
+        hackyRemoveCID(component.cid);
         window.worldObject.removeCID(component.cid);
       }
       break;
