@@ -4,6 +4,7 @@ var Reoculus = {
   Plane: require('./Plane'),
   render: require('./render'),
   Sphere: require('./Sphere'),
+  Stack: require('./Stack'),
   Tree: require('./Tree'),
   World: require('./World')
 };

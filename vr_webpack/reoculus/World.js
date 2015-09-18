@@ -11,18 +11,19 @@ function parseJSX(str) {
   var i = 1;
   var props = {};
 
-  var tagEnd = str.indexOf(' ');
-  if (tagEnd < 0) {
-    tagEnd = str.indexOf('/>');
-  }
+  var tagEnd = Math.min(
+    Math.min(str.indexOf(' '), Infinity),
+    Math.min(str.indexOf('/>'), Infinity),
+    Math.min(str.indexOf('>'), Infinity)
+  );
   if (tagEnd < 0) {
     return;
   }
-  var tag = str.substr(1, tagEnd).trim();
-  /*if (!Reoculus[tag]) {
+  var tag = str.substring(1, tagEnd).trim();
+  if (!Reoculus[tag]) {
     console.log('No Component named ' + tag + ' exists.');
     return;
-  }*/
+  }
   i = tagEnd;
   var latestProp = null;
   var bracketStack = [];
@@ -31,7 +32,21 @@ function parseJSX(str) {
       i++;
       continue;
     }
-    if (str.substr(i) === '/>') {
+    if (str.substr(i, 2) === '/>') {
+      return { tag, props };
+    }
+    if (str[i] === '>') {
+      if (tag === 'Stack') {
+        var endTagPos = str.indexOf('</Stack>');
+        var content = str.substring(i + 1, endTagPos).trim();
+        var inner = content.split(/ *\n */);
+        props.children = [];
+        var children = inner.map(function(text) {
+          console.log('TEXT', text);
+          var data = parseJSX(text);
+          props.children.push(React.createElement(Reoculus[data.tag], data.props));
+        });
+      }
       return { tag, props };
     }
     if (latestProp === null) {
@@ -67,7 +82,7 @@ export default class World extends React.Component {
       children: []
     };
     props.registerAddObject(this.addObject.bind(this));
-    
+
     // Hacky world registration
     window.worldObject = this;
   }
