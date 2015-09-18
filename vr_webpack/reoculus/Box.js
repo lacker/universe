@@ -13,7 +13,7 @@ export default class Box extends React.Component {
     var material = this.props.material;
     if (!material) {
       if (this.props.color) {
-        material = new Three.MeshBasicMaterial({color: this.props.color});
+        material = new Three.MeshLambertMaterial({color: this.props.color});
       } else {
         material = new Three.MeshNormalMaterial();
       }

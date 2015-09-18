@@ -73,6 +73,16 @@ effect.setSize(window.innerWidth, window.innerHeight);
 // Create a VR manager helper to enter and exit VR mode.
 var manager = new WebVRManager(renderer, effect, {hideButton: false});
 
+// Add lights
+var spotLight = new THREE.SpotLight(0xffffff);
+spotLight.position.set(2, 20, 4);
+scene.add(spotLight);
+var spotLight2 = new THREE.SpotLight(0x555555);
+spotLight2.position.set(-10, 20, -10);
+scene.add(spotLight2);
+var ambient = new THREE.AmbientLight(0x999999);
+scene.add(ambient);
+
 // Add a repeating grid as a floor.
 var numRepeats = 1000;
 var texture = THREE.ImageUtils.loadTexture(
