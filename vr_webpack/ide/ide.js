@@ -286,6 +286,10 @@ animate();
 // Returns whether the task is actually finished.
 function finishEditorTask(task, params, string) {
   if (task == "create") {
+    if (string == "") {
+      // You can just cancel out of creation if you don't type anything
+      return true;
+    }
     var success = addObject(string, params.x, params.z);
     if (success) {
       editor.lastCreation = string;
@@ -306,6 +310,7 @@ function onKeyDown(e) {
         editor.task = "none";
         editor.params = null;
         editor.value = "";
+        editor.cursor = 0;
         editor.visible = false;
       } else {
         // We failed to exit the editor
@@ -443,14 +448,13 @@ function onKeyDown(e) {
     case "c":
     case "C":
       // "Create" functionality
-      if (aimer.visible) {
-        var spot = floorSpot();
-        if (spot != null) {
-          editor.visible = true;
-          editor.task = "create";
-          editor.params = {x: spot.x, y: spot.y, z: spot.z};
-          editor.value = "";
-        }
+      var spot = floorSpot();
+      if (spot != null) {
+        editor.visible = true;
+        editor.task = "create";
+        editor.params = {x: spot.x, y: spot.y, z: spot.z};
+        editor.value = "";
+        editor.cursor = 0;
       }
       break;
     case "g":
