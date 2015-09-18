@@ -261,10 +261,10 @@ function targetComponent() {
     return null;
   }
   var object = spots[0].object;
-  window.xxx = object;
-  console.log("targetComponent found something");
+  console.log("targetComponent found something:");
   console.log(object);
-  console.log("cid: " + object.cid);
+  console.log("it has cid: " + object.cid);
+  return object;
 }
 
 // Request animation frame loop function
@@ -331,8 +331,11 @@ function finishEditorTask(task, params, string) {
   }
 
   if (task == "edit") {
-    console.log("TODO: finish edit task");
-    return false;
+    var success = addObject(string, params.x, params.z, params.cid);
+    if (success) {
+      editor.lastCreation = string;
+    }
+    return success;
   }
 
   console.log("unknown task: " + task);
@@ -511,7 +514,23 @@ function onKeyDown(e) {
       // "Edit" functionality
       var component = targetComponent();
       if (component != null) {
-        console.log("targeting component: " + component.jsxSource);
+        editor.visible = true;
+        editor.task = "edit";
+        editor.value = window.worldObject.sourceForCID(component.cid);
+        editor.params = { cid: component.cid,
+                          x: component.position.x,
+                          z: component.position.z };
+        editor.cursor = 0;
+        aimer.visible = false;
+        console.log("editing component: " + component.cid);
+      }
+      break;
+    case "z":
+    case "Z":
+      // "Delete" functionality
+      var component = targetComponent();
+      if (component != null) {
+        window.worldObject.removeCID(component.cid);
       }
       break;
     case "Shift":

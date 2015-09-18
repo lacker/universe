@@ -48,6 +48,31 @@ export default class World extends React.Component {
     window.worldObject = this;
   }
 
+  // Finds the source for a cid
+  sourceForCID(cid) {
+    for (var child of this.state.children) {
+      if (child.props.cid == cid) {
+        return child.jsxSource;
+      }
+    }
+    return null;
+  }
+
+  // Deletes the object with the given cid
+  removeCID(cid) {
+    // Remove any children that already have this cid
+    var newChildren = [];
+    for (var child of this.state.children) {
+      if (child.props.cid != cid) {
+        newChildren.push(child);
+      } else {
+        console.log("removing old object " + cid);
+      }
+    }
+    this.state.children = newChildren;
+    this.forceUpdate();
+  }
+
   // Returns whether it was successful
   addObject(str, x, z, cid) {
     var component = parseJSX(str);
@@ -65,15 +90,9 @@ export default class World extends React.Component {
     console.log("creating " + cid);
     component.props.cid = cid;
 
-    // Remove any children that already have this cid
-    var newChildren = [];
-    for (var child of this.state.children) {
-      if (child.props.cid != cid) {
-        newChildren.push(child);
-      }
-    }
-    newChildren.push(component);
-    this.state.children = newChildren;
+    this.removeCID(cid);
+
+    this.state.children.push(component);
     this.forceUpdate();
     return true;
   }
