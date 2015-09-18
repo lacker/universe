@@ -22,6 +22,7 @@ var VRControls = require('../webvr/VRControls');
 
 var Reoculus = require('../reoculus');
 var Box = Reoculus.Box;
+var World = Reoculus.World;
 
 //Setup three.js WebGL renderer
 var renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -32,14 +33,10 @@ document.body.appendChild(renderer.domElement);
 
 // Create a three.js scene.
 //var scene = new THREE.Scene();
-var scene = Reoculus.render(
-  <Box
-    width={0.2}
-    height={0.2}
-    depth={0.2}
-    position={{x: 0, y: -0.5, z: -2}}
-    material={new THREE.MeshNormalMaterial()} />
-);
+function registerAddObject(fn) {
+  window.addObject = fn;
+}
+var scene = Reoculus.render(<World registerAddObject={registerAddObject} />);
 
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.3, 10000);

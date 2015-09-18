@@ -7,11 +7,12 @@ export default class Box extends React.Component {
     var height = this.props.height || 1;
     var depth = this.props.depth || 1;
     var geometry = new Three.BoxGeometry(width, height, depth);
+    var material = this.props.material || new Three.MeshNormalMaterial();
     return (
       <mesh
         {...this.props}
         geometry={geometry}
-        material={this.props.material} />
+        material={material} />
     );
   }
 }

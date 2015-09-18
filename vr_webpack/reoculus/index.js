@@ -1,13 +1,10 @@
-import Box from './Box';
-import Component from './Component';
-import Plane from './Plane';
-import render from './render';
-import Sphere from './Sphere';
-
-module.exports = {
-  Box,
-  Component,
-  Plane,
-  render,
-  Sphere
+var Reoculus = {
+  Box: require('./Box'),
+  Component: require('./Component'),
+  Plane: require('./Plane'),
+  render: require('./render'),
+  Sphere: require('./Sphere'),
+  World: require('./World')
 };
+
+export default Reoculus;
