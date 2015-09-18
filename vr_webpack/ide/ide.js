@@ -210,6 +210,20 @@ editor.insert = function(text) {
 // Player's velocity in camera-space with y projected out
 var velocity = {x: 0, z: 0};
 
+// The floor spot that the camera is looking at.
+// Returns null if the camera isn't looking at the ground.
+function floorSpot() {
+  var vector = new THREE.Vector3(0, 0, -1);
+  vector = camera.localToWorld(vector);
+  vector.sub(camera.position);
+  var raycaster = new THREE.Raycaster(camera.position, vector);
+  var spots = raycaster.intersectObject(floor);
+  if (spots.length == 0) {
+    return null;
+  }
+  return spots[0].point;
+}
+
 // Request animation frame loop function
 function animate(timestamp) {
   if (velocity.x != 0 || velocity.z != 0) {
@@ -395,8 +409,16 @@ function onKeyDown(e) {
 
   } else {
     switch(e.key) {
+    case "c":
+    case "C":
+      // "Create" functionality
+      if (aimer.visible) {
+        console.log(floorSpot());
+      }
+      break;
     case "e":
     case "E":
+      // "Edit" functionality
       if (aimer.visible) {
         editor.visible = true;
         aimer.visible = false;
