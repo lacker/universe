@@ -287,6 +287,9 @@ animate();
 function finishEditorTask(task, params, string) {
   if (task == "create") {
     var success = addObject(string, params.x, params.z);
+    if (success) {
+      editor.lastCreation = string;
+    }
     return success;
   }
 
@@ -447,6 +450,16 @@ function onKeyDown(e) {
           editor.task = "create";
           editor.params = {x: spot.x, y: spot.y, z: spot.z};
           editor.value = "";
+        }
+      }
+      break;
+    case "g":
+    case "G":
+      // "Again" functionality
+      if (editor.lastCreation) {
+        var spot = floorSpot();
+        if (spot != null) {
+          addObject(editor.lastCreation, spot.x, spot.z);
         }
       }
       break;
