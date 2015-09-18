@@ -15,9 +15,13 @@
 require('../webvr-polyfill/src/main.js')
 
 var THREE = require('three');
+var React = require('react');
 var WebVRManager = require('../webvr/main');
 var VREffect = require('../webvr/VREffect');
 var VRControls = require('../webvr/VRControls');
+
+var Reoculus = require('../reoculus');
+var Box = Reoculus.Box;
 
 //Setup three.js WebGL renderer
 var renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -27,7 +31,15 @@ renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 // Create a three.js scene.
-var scene = new THREE.Scene();
+//var scene = new THREE.Scene();
+var scene = Reoculus.render(
+  <Box
+    width={0.2}
+    height={0.2}
+    depth={0.2}
+    position={{x: 0, y: -0.5, z: -2}}
+    material={new THREE.MeshNormalMaterial()} />
+);
 
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.3, 10000);
