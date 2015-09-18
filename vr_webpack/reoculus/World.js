@@ -88,6 +88,7 @@ export default class World extends React.Component {
     if (!cid) {
       cid = "cid" + NEXT.CID;
       NEXT.CID++;
+      window.lastCID = cid;
     }
     console.log("creating " + cid);
     component.props.cid = cid;

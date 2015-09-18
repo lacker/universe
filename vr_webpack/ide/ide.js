@@ -340,13 +340,21 @@ function finishEditorTask(task, params, string) {
   }
 
   if (task == "edit") {
+    if (string == params.start) {
+      // We haven't made any changes. Close the editor
+      return true;
+    }
     var success = addObject(string, params.x, params.z);
     if (success) {
       hackyRemoveCID(params.cid);
       window.worldObject.removeCID(params.cid);
       editor.lastCreation = string;
+
+      // Update the params to indicate that we continue editing
+      params.start = string;
+      params.cid = window.lastCID;
     }
-    return success;
+    return false;
   }
 
   console.log("unknown task: " + task);
@@ -530,7 +538,8 @@ function onKeyDown(e) {
         editor.value = window.worldObject.sourceForCID(component.cid);
         editor.params = { cid: component.cid,
                           x: component.position.x,
-                          z: component.position.z };
+                          z: component.position.z,
+                          start: editor.value };
         editor.cursor = 0;
         aimer.visible = false;
         console.log("editing component: " + component.cid);
