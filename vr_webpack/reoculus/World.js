@@ -2,36 +2,61 @@ import React from 'react';
 import Three from 'three';
 import Reoculus from './index';
 
-var jsxMatch = /\s*<([a-zA-Z0-9]+)([^>]*)\/>\s*/;
-var propPiecesMatch = /([a-zA-Z0-9]+)=\{([^\}]+)\}/;
-
 // Crappy JSX interpreter
 function parseJSX(str) {
-  var match = jsxMatch.exec(str);
-  if (!match) {
+  str = str.trim();
+  if (str[0] !== '<') {
     return;
   }
-  var tag = match[1];
-  var props = (match[2] || '').trim();
-  var propsMatch = /([a-zA-Z0-9]+={[^\}]+})+/g;
-  var match = null;
+  var i = 1;
+  var props = {};
 
-  var componentProps = {};
-  while (match = propsMatch.exec(props)) {
-    var pieces = propPiecesMatch.exec(match);
-    var key = pieces[1];
-    var val = pieces[2];
-    componentProps[key] = eval(val);
+  var tagEnd = str.indexOf(' ');
+  if (tagEnd < 0) {
+    tagEnd = str.indexOf('/>');
   }
-  if (!Reoculus[tag]) {
-    console.log('No Component named ' + tag + ' exists.');
-    debugger;
+  if (tagEnd < 0) {
     return;
   }
-  return {
-    tag: tag,
-    props: componentProps
-  };
+  var tag = str.substr(1, tagEnd).trim();
+  /*if (!Reoculus[tag]) {
+    console.log('No Component named ' + tag + ' exists.');
+    return;
+  }*/
+  i = tagEnd;
+  var latestProp = null;
+  var bracketStack = [];
+  while (i < str.length) {
+    if (str[i] === ' ' && bracketStack.length === 0) {
+      i++;
+      continue;
+    }
+    if (latestProp === null) {
+      var propEnd = str.indexOf('=', i);
+      if (propEnd < 0) {
+        return { tag, props };
+      }
+      latestProp = str.substring(i, propEnd);
+      i = propEnd + 1;
+      continue;
+    }
+    if (str[i] === '{' || str[i] === '}') {
+      var last = bracketStack.length - 1;
+      if (bracketStack[last] && str[i] !== bracketStack[last].ch) {
+        var bracket = bracketStack.pop();
+        if (bracketStack.length === 0) {
+          var contents = str.substring(bracket.pos + 1, i);
+          console.log(contents);
+          props[latestProp] = Function('return ' + contents)();
+          latestProp = null;
+        }
+      } else {
+        bracketStack.push({ ch: str[i], pos: i });
+      }
+    }
+    i++;
+  }
+  return { tag, props };
 }
 
 var NEXT = { CID: 1 };
